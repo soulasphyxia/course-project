@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org/">
+<head>
+  <meta charset="UTF-8">
+  <title>Новое видео</title>
+  <link rel="stylesheet" th:href="@{/css/upload.css}">
+</head>
+<body>
+<a id="admin-panel" data-th-href="@{/admin}"><-- К админ-панели</a>
+<h1>Добавить видео</h1>
+<form method="post"
+      data-th-action="@{/admin/upload}"
+      enctype="multipart/form-data">
+  <label>
+    Название:<br>
+    <input required minlength="3" maxlength="64" type="text" name="title" data-th-value="${videoDto?.title}">
+  </label><br>
+  <label>
+    Описание:<br>
+    <textarea name="content" maxlength="300" data-th-text="${videoDto?.content}"></textarea>
+  </label><br>
+  <label>
+    Видимость:<br>
+    <select id="visibility" name="visibility" data-th-value="${videoDto?.visibility}">
+      <option data-th-value="PUBLIC" >Public</option>
+      <option data-th-value="PRIVATE">Private</option>
+    </select>
+  </label><br>
+  <label>
+    Темы:<br>
+    <input type="text" name="tags" data-th-text="${videoDto?.tags}" />
+  </label><br>
+  <label>
+    <input required id="input-file" type="file" name="file" accept="video/mp4" />
+  </label><br>
+  <button type="submit">Загрузить</button>
+</form>
+</body>
+</html>

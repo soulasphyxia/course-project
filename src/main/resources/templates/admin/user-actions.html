@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Действия пользователей</title>
+    <link rel="stylesheet" th:href="@{/css/user-actions.css}">
+</head>
+<body>
+<a id="admin-panel" data-th-href="@{/admin}"><-- К админ-панели</a>
+<h1>Действия пользователей</h1>
+<div id="inputs">
+
+    <form id="find" method="get" data-th-action="@{/admin/user-actions}">
+        <label for="find">Дата: <input type="date" name="date" required><br>
+            Время: <input type="time" name="from"> - <input type="time" name="to"><br>
+        </label>
+        <button id="submit" type="submit">Найти</button>
+    </form>
+    <form method="get" data-th-href="@{admin/user-actions}">
+        <button id="reset" type="submit" data-th-href="@{admin/user-actions}">Сброс</button>
+    </form>
+
+</div>
+<table>
+    <thead>
+    <tr>
+        <th>#</th>
+        <th>Дата</th>
+        <th>Время</th>
+        <th>Действие</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr data-th-each="action : ${userActions}">
+        <td data-th-text="${action.getId()}"></td>
+        <td data-th-text="${action.getDate()}"></td>
+        <td data-th-text="${action.getTime()}"></td>
+        <td data-th-text="${action.getAction()}"></td>
+    </tr>
+    </tbody>
+</table>
+<div class="row">
+    <div th:if="${totalPages > 0}" class="pagination"
+         th:each="pageNumber : ${pageNumbers    }">
+        <a th:href="@{/admin/user-actions(page=${pageNumber}, date=${date}, from=${from}, to=${to})}"
+           th:text=${pageNumber}
+           th:class="${pageNumber==pageNumber + 1} ? active"></a>
+    </div>
+</div>
+</body>
+</html>

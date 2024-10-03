@@ -1,0 +1,137 @@
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+#admin-panel {
+    display: block;
+    margin: 20px auto;
+    font-size: 18px;
+    color: white;
+    background-color: #0073e6;
+    padding: 10px 20px;
+    text-decoration: none;
+    text-align: center;
+    width: 200px;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+#admin-panel:hover {
+    color: #005bb5;
+}
+
+#upload {
+    display: block;
+    margin: 20px auto;
+    font-size: 18px;
+    color: white;
+    background-color: #0073e6;
+    padding: 10px 20px;
+    text-decoration: none;
+    text-align: center;
+    width: 200px;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+#upload:hover {
+    background-color: #005bb5;
+}
+
+table {
+    width: 80%;
+    margin: 30px auto;
+    border-collapse: collapse;
+    table-layout: fixed;
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+thead {
+    background-color: #0073e6;
+    color: white;
+}
+
+thead th {
+    padding: 15px;
+    font-size: 18px;
+    text-align: left;
+}
+
+tbody tr {
+    border-bottom: 1px solid #ddd;
+}
+
+tbody tr td {
+    padding: 15px;
+    text-align: left;
+    vertical-align: middle;
+    font-size: 16px;
+}
+
+tbody tr td a {
+    color: #0073e6;
+    text-decoration: none;
+}
+
+tbody tr td a:hover {
+    color: #005bb5;
+}
+
+tbody tr td form button {
+    background-color: #ff4c4c;
+    border: none;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+tbody tr td form button:hover {
+    background-color: #d43838;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.pagination a {
+    margin: 0 5px;
+    padding: 8px 12px;
+    background-color: #f1f1f1;
+    color: #333;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.pagination a:hover {
+    background-color: #0073e6;
+    color: white;
+}
+
+.pagination a.active {
+    background-color: #0073e6;
+    color: white;
+}
+
+
+
+.row {
+    display: flex;
+    flex-direction: row;
+}
+

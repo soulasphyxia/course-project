@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Админ-панель</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+<h1>Админ-панель</h1>
+<ul>
+    <li><a data-th-href="@{/admin/videos}">Каталог видео</a></li>
+    <li><a data-th-href="@{/admin/upload}">Добавить видео</a></li>
+    <li><a data-th-href="@{/admin/ratings}">Рейтинг видео</a></li>
+    <li><a data-th-href="@{/admin/user-actions}">Действия пользователей</a></li>
+</ul>
+</body>
+</html>

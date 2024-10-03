@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/basic_schema.sql
+  - include:
+      file: db/changelog/tag_schema.sql
+  - include:
+      file: db/changelog/user_actions.sql

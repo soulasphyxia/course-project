@@ -1,0 +1,84 @@
+/* Центрирование ссылки к админ-панели */
+#admin-panel {
+    display: block;
+    margin: 20px auto;
+    font-size: 18px;
+    color: white;
+    background-color: #0073e6;
+    padding: 10px 20px;
+    text-decoration: none;
+    text-align: center;
+    width: 200px;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+/* Центрирование формы */
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+/* Стили для полей формы */
+form label {
+    margin-bottom: 10px;
+    font-size: 16px;
+    width: 100%;
+    text-align: left;
+}
+
+form input[type="text"],
+form textarea,
+form select,
+form input[type="file"] {
+    width: 300px;
+    padding: 8px;
+    margin: 5px 0;
+    font-size: 16px;
+}
+
+form textarea {
+    height: 100px;
+    resize: none;
+}
+
+/* Стили для кнопки загрузки */
+button[type="submit"] {
+    background-color: #0073e6;
+    color: white;
+    font-size: 18px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover для кнопок */
+button[type="submit"]:hover {
+    color: #005bb5;
+}
+
+/* Hover для ссылки */
+#admin-panel:hover {
+    background-color: #005bb5;
+}
+
+/* Центрирование заголовка */
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Центрирование всей страницы */
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 50px;
+    font-family: Arial, sans-serif;
+}

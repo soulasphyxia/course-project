@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>[[${video.getTitle()}]]</title>
+  <link rel="stylesheet" th:href="@{/css/video.css}">
+</head>
+<body>
+<a class=to-videos-list data-th-href="@{/user/videos}"><-- К списку видео</a>
+<video width="640" height="480" data-th-src="${video.getUrl()}" muted controls></video>
+<h1 data-th-text="${video.getTitle()}"></h1>
+<p>Описание: <span data-th-text="${video.getContent()}"></span></p>
+<p>Темы: <span data-th-text="${video.getTags()} "></span></p>
+<div class="row">
+  <label>
+    <span id="likes" data-th-text="${video.getLikes()}"></span>
+    <button id= "like-btn" class="removed-like">Like</button>
+  </label>
+  <label>
+    <span id="dislikes" data-th-text="${video.getDislikes()}"></span>
+    <button id= "dislike-btn" class="removed-dislike">Dislike</button>
+  </label>
+</div>
+<script type="text/javascript" th:src="@{/js/video.js}"></script>
+<script type="text/javascript" th:src="@{/js/user_actions_logger.js}"></script>
+</body>
+</html>
