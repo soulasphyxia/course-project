@@ -1,9 +1,11 @@
 package org.soulasphyxia.webcourseproject.controller.restcontrollers;
 
 import lombok.RequiredArgsConstructor;
+import org.soulasphyxia.webcourseproject.entity.dto.RatingDto;
 import org.soulasphyxia.webcourseproject.service.VideoService;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,5 +33,12 @@ public class LikeController {
     @PostMapping("/remove-dislike/videos/{videoId}")
     public void removeDislikeVideo(@PathVariable long videoId) {
         videoService.removeDislikeVideo(videoId);
+    }
+
+    @PostMapping("/rating/videos/{videoId}")
+    public void changeRating(@PathVariable long videoId,
+                             @RequestBody RatingDto ratingDto) {
+        videoService.changeRating(videoId, ratingDto);
+
     }
 }

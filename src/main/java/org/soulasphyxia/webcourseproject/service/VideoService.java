@@ -5,9 +5,13 @@ import lombok.RequiredArgsConstructor;
 import org.bytedeco.javacv.FrameGrabber;
 import org.soulasphyxia.webcourseproject.entity.Video;
 import org.soulasphyxia.webcourseproject.entity.VideoVisibility;
+import org.soulasphyxia.webcourseproject.entity.dto.RatingDto;
+import org.soulasphyxia.webcourseproject.entity.dto.UpdateVideoDto;
 import org.soulasphyxia.webcourseproject.entity.dto.VideoDto;
+import org.soulasphyxia.webcourseproject.exception.ForbiddenAccessException;
 import org.soulasphyxia.webcourseproject.mapper.VideoMapper;
 import org.soulasphyxia.webcourseproject.repository.VideoRepository;
+import org.soulasphyxia.webcourseproject.utils.AuthenticationSystem;
 import org.soulasphyxia.webcourseproject.utils.PageUtils;
 import org.soulasphyxia.webcourseproject.utils.ThumbnailTaker;
 import org.springframework.data.domain.Page;
@@ -17,15 +21,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,12 +36,25 @@ public class VideoService {
     private final S3Service s3Service;
     private final VideoMapper videoMapper;
     private final ThumbnailTaker thumbnailTaker;
+    private final TagService tagService;
 
-    public Page<VideoDto> getVideos(Pageable paging, Predicate<Video> filter) {
-        List<Video> videos = videoRepository.findAllByOrderByIdAsc();
-        if (filter != null) {
-            videos = videos.stream().filter(filter).toList();
-        }
+    public Page<VideoDto> getVideos(Pageable paging) {
+        List<Video> videos = videoRepository.findAll();
+        return new PageImpl<>(videoMapper.toVideoDtos(PageUtils.getContentPage(paging, videos)), paging, videos.size());
+    }
+
+    public Page<VideoDto> getPublicVideos(Pageable paging) {
+        List<Video> videos = videoRepository.findAllPublic();
+        return new PageImpl<>(videoMapper.toVideoDtos(PageUtils.getContentPage(paging, videos)), paging, videos.size());
+    }
+
+    public Page<VideoDto> getPublicVideosByTagId(Long tagId, Pageable paging) {
+        List<Video> videos = videoRepository.findAllPublicByTagId(tagId, paging);
+        return new PageImpl<>(videoMapper.toVideoDtos(PageUtils.getContentPage(paging, videos)), paging, videos.size());
+    }
+
+    public Page<VideoDto> getVideosByTitle(String title, Pageable paging) {
+        List<Video> videos = videoRepository.findAllByTitle(title);
         return new PageImpl<>(videoMapper.toVideoDtos(PageUtils.getContentPage(paging, videos)), paging, videos.size());
     }
 
@@ -50,7 +62,29 @@ public class VideoService {
         Video video = videoRepository
                 .findById(videoId)
                 .orElseThrow(() -> new EntityNotFoundException("Video with id %d not found".formatted(videoId)));
+        if (video.getVisibility().equals(VideoVisibility.PRIVATE) && !AuthenticationSystem.isLogged()) {
+            throw new ForbiddenAccessException();
+        }
         return videoMapper.toVideoDto(video);
+    }
+
+    public void editVideo(Long videoId, UpdateVideoDto updateVideoDto) {
+        Video targetVideo = videoRepository.findById(videoId).orElseThrow(() ->
+            new EntityNotFoundException("Video with id %d not found".formatted(videoId))
+        );
+        if (updateVideoDto.getTitle() != null) {
+            targetVideo.setTitle(updateVideoDto.getTitle());
+        }
+        if (updateVideoDto.getContent() != null) {
+            targetVideo.setContent(updateVideoDto.getContent());
+        }
+        if (updateVideoDto.getTagId() != null) {
+            targetVideo.setTag(tagService.findById(updateVideoDto.getTagId()));
+        }
+        if (updateVideoDto.getVisibility() != null) {
+            targetVideo.setVisibility(updateVideoDto.getVisibility());
+        }
+        videoRepository.save(targetVideo);
     }
 
     public String deleteVideoById(Long videoId) {
@@ -68,7 +102,7 @@ public class VideoService {
         return "error deleting video with id %d.".formatted(videoId);
     }
 
-    public String parseFilename(String url) {
+    private String parseFilename(String url) {
         Pattern regex = Pattern.compile("[^/]+$", Pattern.MULTILINE);
         Matcher matcher = regex.matcher(url);
         if (matcher.find()) {
@@ -98,7 +132,9 @@ public class VideoService {
                 .orElseThrow(() -> new EntityNotFoundException("Video with id %d not found"
                         .formatted(videoId)));
         Long likes = video.getLikes();
-        video.setLikes(likes - 1);
+        if (likes != 0) {
+            video.setLikes(likes - 1);
+        }
     }
 
     public void removeDislikeVideo(long videoId) {
@@ -106,7 +142,9 @@ public class VideoService {
                 .orElseThrow(() -> new EntityNotFoundException("Video with id %d not found"
                         .formatted(videoId)));
         Long dislikes = video.getDislikes();
-        video.setDislikes(dislikes - 1);
+        if (dislikes != 0) {
+            video.setDislikes(dislikes - 1);
+        }
     }
 
     public String uploadVideo(VideoDto videoDto, MultipartFile file) {
@@ -116,10 +154,11 @@ public class VideoService {
             BufferedImage thumbnail = thumbnailTaker.getThumbnailFromVideo(url);
             String thumbnailUrl = s3Service.uploadThumbnail(thumbnail, file.getOriginalFilename() + "-thumbnail.jpg");
             videoDto.setThumbnail(thumbnailUrl);
-            videoRepository.save(videoMapper.toVideo(videoDto));
-        } catch (IOException e) {
-            System.out.println("Error uploading video");
-        } catch (FrameGrabber.Exception e) {
+
+            Video video = videoMapper.toVideo(videoDto);
+            video.setTag(tagService.findById(videoDto.getTagId()));
+            videoRepository.save(video);
+        } catch (IOException | FrameGrabber.Exception e) {
             throw new RuntimeException(e);
         }
         return "Video uploaded";
@@ -131,16 +170,12 @@ public class VideoService {
         return new PageImpl<>(PageUtils.getContentPage(paging, videoDtos), paging, videoDtos.size());
     }
 
-    public Page<VideoDto> getFilteredVideos(String pattern, Pageable paging) {
-        List<Video> allVideos = videoRepository.findAll();
-        List<Video> filteredVideos = allVideos.stream().
-                filter(video ->
-                        video.getTags().stream()
-                                .anyMatch(tag -> tag.toLowerCase().contains(pattern.toLowerCase())))
-                .filter(video -> video.getVisibility().equals(VideoVisibility.PUBLIC))
-                .toList();
-
-        return new PageImpl<>(videoMapper.toVideoDtos(PageUtils.getContentPage(paging, filteredVideos)), paging, filteredVideos.size());
-
+    @Transactional
+    public void changeRating(long videoId, RatingDto ratingDto) {
+        Video video = videoRepository.findById(videoId)
+                .orElseThrow(() -> new EntityNotFoundException("Video with id %d not found"
+                        .formatted(videoId)));
+        video.setLikes(ratingDto.likes());
+        video.setDislikes(ratingDto.dislikes());
     }
 }

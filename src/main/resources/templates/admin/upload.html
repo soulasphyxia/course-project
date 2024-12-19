@@ -28,9 +28,11 @@
     </select>
   </label><br>
   <label>
-    Темы:<br>
-    <input type="text" name="tags" data-th-text="${videoDto?.tags}" />
-  </label><br>
+    Тема:<br>
+    <select id="taId" name="tagId" data-th-value="${videoDto?.tagId}" >
+      <option th:each="tag : ${tags}" data-th-text="${tag.title}" data-th-value="${tag.id}"></option>
+    </select>
+    </label><br>
   <label>
     <input required id="input-file" type="file" name="file" accept="video/mp4" />
   </label><br>

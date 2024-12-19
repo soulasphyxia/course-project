@@ -5,7 +5,7 @@ const likes = document.getElementById("likes");
 const dislikes = document.getElementById("dislikes");
 
 function initBtnStates() {
-    if(localStorage.getItem("userLikes") == null) {
+    if (localStorage.getItem("userLikes") == null) {
         localStorage.setItem("userLikes", JSON.stringify({}));
     }
     let userLikes = JSON.parse(localStorage.getItem("userLikes"));
@@ -31,52 +31,46 @@ initBtnStates();
 
 likeBtn.addEventListener("click", () => {
     const className = likeBtn.className;
-    if(className === "liked") {
+    if (className === "liked") {
         likeBtn.className = "removed-like";
-        removeLike();
         decreaseValue(likes, likes.textContent)
         dislikeBtn.className = "removed-dislike"
         setBtnState(false, false)
-    } else if (className === "blocked"){
+    } else if (className === "blocked") {
         likeBtn.className = "liked";
-        like();
         increaseValue(likes, likes.textContent)
         decreaseValue(dislikes, dislikes.textContent);
-        removeDislike();
         dislikeBtn.className = "blocked";
         setBtnState(true, false)
     } else if (className === "removed-like") {
         likeBtn.className = "liked";
-        like();
         increaseValue(likes, likes.textContent);
         dislikeBtn.className = "blocked";
         setBtnState(true, false)
     }
+    changeRating(getValue(likes), getValue(dislikes))
 })
 
 dislikeBtn.addEventListener("click", () => {
     const className = dislikeBtn.className;
-    if(className === "disliked") {
+    if (className === "disliked") {
         dislikeBtn.className = "removed-dislike";
-        removeDislike();
         decreaseValue(dislikes, dislikes.textContent)
         likeBtn.className = "removed-like"
         setBtnState(false, false)
-    } else if (className === "blocked"){
+    } else if (className === "blocked") {
         dislikeBtn.className = "disliked";
-        dislike();
         increaseValue(dislikes, dislikes.textContent)
         decreaseValue(likes, likes.textContent);
-        removeLike();
         likeBtn.className = "blocked";
         setBtnState(false, true)
     } else if (className === "removed-dislike") {
         dislikeBtn.className = "disliked";
-        dislike();
         increaseValue(dislikes, dislikes.textContent);
         likeBtn.className = "blocked";
         setBtnState(false, true)
     }
+    changeRating(getValue(likes), getValue(dislikes))
 })
 
 function increaseValue(element, value) {
@@ -87,6 +81,10 @@ function decreaseValue(element, value) {
     element.textContent = (parseInt(value) - 1).toString();
 }
 
+function getValue(element) {
+    return parseInt(element.textContent);
+}
+
 function setBtnState(likeState, dislikeState) {
     const userLikes = JSON.parse(localStorage.getItem("userLikes"))
     userLikes[videoId] = {
@@ -95,6 +93,20 @@ function setBtnState(likeState, dislikeState) {
     }
     localStorage.setItem("userLikes", JSON.stringify(userLikes));
     return userLikes
+}
+
+async function changeRating(likes, dislikes) {
+    console.log("changeratings")
+    await fetch(`/user/rating/videos/${videoId}`, {
+        headers: {
+            "Content-Type": "application/json"
+        },
+        method: 'POST',
+        body: JSON.stringify({
+            'likes': likes,
+            'dislikes': dislikes
+        }),
+    })
 }
 
 

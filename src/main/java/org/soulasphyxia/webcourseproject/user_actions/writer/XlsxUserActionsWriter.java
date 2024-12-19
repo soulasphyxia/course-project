@@ -16,7 +16,7 @@ import java.io.InputStream;
 import java.util.List;
 
 @Component
-public class XlsxUserActionsParser implements UserActionsWriter {
+public class XlsxUserActionsWriter implements UserActionsWriter {
 
     @Override
     public InputStream write(List<UserAction> userActions) {
@@ -31,20 +31,21 @@ public class XlsxUserActionsParser implements UserActionsWriter {
             idCellStart.setCellValue("ID");
             Cell dateCellStart = header.createCell(1);
             dateCellStart.setCellValue("Дата");
-            Cell timeCellStart = header.createCell(2);
-            timeCellStart.setCellValue("Время");
-            Cell actionCellStart = header.createCell(3);
+            Cell actionCellStart = header.createCell(2);
+            Cell userIpCellStart = header.createCell(3);
+            userIpCellStart.setCellValue("Ip пользователя");
             actionCellStart.setCellValue("Действие");
             for (UserAction userAction : userActions) {
                 XSSFRow row = sheet.createRow(rowIndex++);
                 Cell idCell = row.createCell(0);
                 idCell.setCellValue(userAction.getId());
                 Cell dateCell = row.createCell(1);
-                dateCell.setCellValue(userAction.getDate().toString());
-                Cell timeCell = row.createCell(2);
-                timeCell.setCellValue(userAction.getTime().toLocalTime().toString());
-                Cell actionCell = row.createCell(3);
+                dateCell.setCellValue(userAction.getDateTime().toString());
+                Cell actionCell = row.createCell(2);
                 actionCell.setCellValue(userAction.getAction());
+                Cell ipCell = row.createCell(3);
+                ipCell.setCellValue(userAction.getUserIp());
+
             }
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             workbook.write(os);

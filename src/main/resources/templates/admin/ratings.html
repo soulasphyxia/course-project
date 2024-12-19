@@ -13,16 +13,14 @@
 <table>
     <thead>
     <tr>
-        <th>#</th>
         <th>Видео</th>
         <th>Рейтинг</th>
     </tr>
     </thead>
     <tbody>
     <tr data-th-each="video : ${videos}">
-        <td data-th-text="${video.getId()}"></td>
         <td>
-            <a data-th-href="@{/videos/{videoId}(videoId=${video.getId()})}"
+            <a data-th-href="@{/user/videos/{videoId}(videoId=${video.getId()})}"
                data-th-text="${video.getTitle()}"></a>
         </td>
         <td data-th-text="${video.getRating()}"></td>

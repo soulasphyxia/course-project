@@ -11,26 +11,38 @@
 <a id="upload" data-th-href="@{/admin/upload}">+ Добавить видео</a><br>
 <form method="get" data-th-action="@{/videos}">
 </form>
+<form method="get" data-th-action="@{/admin/videos/search}">
+    <label>
+        <span class="find">Поиск по названию:</span><br>
+        <input class="find-bar" type="text" name="title" placeholder="Введите название видео">
+        <button class="button" type="submit">Найти</button>
+        <button class="button" data-th-href="@{/admin/videos}">Сброс</button>
+    </label>
+</form>
 <table>
     <thead>
     <tr>
-        <th>#</th>
-        <th>Видео</th>
+        <th>Название</th>
         <th>Видимость</th>
+        <th>Редактировать</th>
         <th>Удалить</th>
     </tr>
     </thead>
     <tbody>
     <tr data-th-each="video : ${videos}">
-        <td data-th-text="${video.getId()}"></td>
         <td>
             <a target='_blank' data-th-href="@{/user/videos/{videoId}(videoId=${video.getId()})}"
                data-th-text="${video.getTitle()}"></a>
         </td>
         <td data-th-text="${video.getVisibility()}"></td>
         <td>
-            <form method="post" data-th-action="@{/admin/delete/{videoId}(videoId=${video.getId()})}">
-                <button type="submit"> X </button>
+            <form method="get" data-th-action="@{/admin/videos/edit/{videoId}(videoId=${video.getId()})}">
+                <button class="edit" type="submit"> 🖊 </button>
+            </form>
+        </td>
+        <td>
+            <form method="post" data-th-action="@{/admin/videos/delete/{videoId}(videoId=${video.getId()})}">
+                <button class="delete" type="submit"> X </button>
             </form>
         </td>
     </tr>

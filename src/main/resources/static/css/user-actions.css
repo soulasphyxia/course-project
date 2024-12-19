@@ -43,7 +43,7 @@ h1 {
     font-size: 14px;
 }
 
-#submit, #reset {
+.sumbit-btn {
     padding: 10px 20px;
     background-color: #0073e6;  /* Голубой цвет */
     color: white;
@@ -53,6 +53,10 @@ h1 {
     cursor: pointer;
     transition: background-color 0.3s ease;
     gap: 20px;
+    margin-top: 10px;
+}
+
+.format {
     margin-top: 10px;
 }
 

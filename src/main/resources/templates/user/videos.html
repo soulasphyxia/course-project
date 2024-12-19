@@ -8,9 +8,16 @@
 <body>
 <h1>Видеотека</h1>
 <form method="get" data-th-action="@{/user/videos/filter}">
-    <label>Поиск по теме: <input required id="pattern" type="text" name="pattern" data-th-value="${pattern}">
-        <button class="find" type="submit">Поиск</button>
-    </label>
+        <label>Поиск по теме: <select class="select-tag" required id="tagId" name="tagId" data-th-value="${videoDto?.tagId}" >
+            <option th:each="tag : ${tagsToSearch}" data-th-text="${tag.title}" data-th-value="${tag.id}"></option>
+        </select>
+            <button class="find" type="submit">Поиск</button>
+        </label>
+</form>
+<form method="get" data-th-action="@{/user/videos/filter}">
+    <div class="tags" data-th-each="tag : ${top10Tags}">
+        <button class="find" name="tagId" data-th-text="${tag.title}" data-th-value="${tag.id}"></button>
+    </div>
 </form>
 <form method="get" data-th-action="@{/videos}">
 </form>
@@ -18,14 +25,14 @@
     <tbody>
     <tr data-th-each="video : ${videos}">
         <td>
-            <a data-th-href="@{/user/videos/{videoId}(videoId=${video.getId()})}">
-                <img alt width="235" height="110" th:src="${video.getThumbnail()}">
-            </a>
-            <a class="video" data-th-href="@{/user/videos/{videoId}(videoId=${video.getId()})}"
-               data-th-text="${video.getTitle()}"></a>
-        </td>
-        <td>
-
+            <div>
+                <a target="_blank" class="video" data-th-href="@{/user/videos/{videoId}(videoId=${video.getId()})}">
+                    <img class="thumbnail" alt th:src="${video.getThumbnail()}">
+                </a>
+                <a class="video" data-th-href="@{/user/videos/{videoId}(videoId=${video.getId()})}"
+                   data-th-text="${video.getTitle()}"></a>
+                <p data-th-text="${video.getTagTitle()}"></p>
+            </div>
         </td>
     </tr>
     </tbody>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org/">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактирование видео</title>
+    <link rel="stylesheet" th:href="@{/css/upload.css}">
+</head>
+<body>
+<a id="admin-panel" data-th-href="@{/admin/videos}"><-- Ко всем видео</a>
+<h1>Редактировать видео</h1>
+<form method="post" data-th-action="@{/admin/videos/edit/{videoId}(videoId=${video.getId()})}">
+    <label>
+        Название:<br>
+        <input required minlength="3" maxlength="64" type="text" name="title"
+               data-th-value="${videoUpdateDto != null ? videoUpdateDto.getTitle() : video.getTitle()}">
+    </label><br>
+    <label>
+        Описание:<br>
+        <textarea name="content" maxlength="300" data-th-text="${videoUpdateDto != null ? videoUpdateDto.getContent() : video.getContent()}"></textarea>
+    </label><br>
+    <label>
+        Видимость:<br>
+        <select id="visibility" name="visibility" data-th-value="${videoUpdateDto?.visibility}">
+            <option th:selected="${video.getVisibility().name() == 'PUBLIC' ? true : false}" data-th-value="PUBLIC" >Public</option>
+            <option th:selected="${video.getVisibility().name() == 'PRIVATE' ? true : false}" data-th-value="PRIVATE">Private</option>
+        </select>
+    </label><br>
+    <label>
+        Тема:<br>
+        <select id="taId" name="tagId" data-th-value="${videoUpdateDto?.tagId}" >
+            <option th:selected="${video.getTagId() == tag.getId() ? true : false}" th:each="tag : ${tags}" data-th-text="${tag.title}" data-th-value="${tag.id}"></option>
+        </select>
+    </label><br>
+    <button type="submit">Редактировать</button>
+</form>
+</body>
+</html>

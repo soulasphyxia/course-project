@@ -55,10 +55,7 @@ public class Video {
     @Column(name = "dislikes")
     private Long dislikes = 0L;
 
-    @ElementCollection
-    @CollectionTable(name = "tags_in_videos",
-            joinColumns = @JoinColumn(name = "video_id"))
-    @Column(name = "tag")
-    @Cascade(value = {CascadeType.ALL})
-    private List<String> tags;
+    @ManyToOne
+    @JoinColumn(name = "tag_id", nullable = false)
+    private Tag tag;
 }

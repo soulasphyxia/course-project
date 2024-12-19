@@ -2,7 +2,9 @@ package org.soulasphyxia.webcourseproject.controller.webcontrollers;
 import lombok.RequiredArgsConstructor;
 import org.soulasphyxia.webcourseproject.entity.dto.VideoDto;
 import org.soulasphyxia.webcourseproject.service.VideoService;
+import org.soulasphyxia.webcourseproject.utils.AuthenticationSystem;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,7 +22,8 @@ public class VideoModelController {
     }
 
     @GetMapping()
-    public String getVideo() {
+    public String getVideo(Model model) {
+        model.addAttribute("isLogged", AuthenticationSystem.isLogged());
         return "user/video";
     }
 }

@@ -22,7 +22,7 @@
             </td>
             <td>
                 <a data-th-href="@{/user/videos/{videoId}(videoId=${video.getId()})}">
-                    <img alt width="295" height="160" th:src="${video.getThumbnail()}">
+                    <img class="thumbnail" alt width="295" height="160" th:src="${video.getThumbnail()}">
                 </a>
                 <a data-th-href="@{/user/videos/{videoId}(videoId=${video.getId()})}"
                    data-th-text="${video.getTitle()}"></a>
@@ -32,7 +32,7 @@
     </table>
     <div th:if="${totalPages > 0}" class="pagination"
          th:each="pageNumber : ${pageNumbers    }">
-        <a th:href="@{/user/videos/filter(page=${pageNumber}, pattern=${pattern})}"
+        <a th:href="@{/user/videos/filter(page=${pageNumber})}"
            th:text="${pageNumber}"
            th:class="${pageNumber==pageNumber + 1} ? active"></a>
     </div>

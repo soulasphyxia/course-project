@@ -4,13 +4,38 @@ let targets = [
 ]
 
 let events = {
-    "liked": 'Пользователь поставил отметку "Нравится" на видео с id ',
-    "disliked": 'Пользователь поставил отметку "Не нравится" на видео с id ',
-    "removed-like": 'Пользователь убрал отметку "Нравится" с видео с id ',
-    "removed-dislike": 'Пользователь убрал отметку "Не нравится" с видео с id ',
-    "find": 'Пользователь искал видео по теме: ',
-    "video": 'Пользователь перешел на страницу видео с id ',
-    "to-videos-list": 'Пользователь перешел по "<-- К списку видео"'
+    "liked": {
+        message: 'Пользователь поставил отметку "Нравится" на видео с id ',
+        func: getActionMessageByBaseURI
+    },
+    "disliked": {
+        message: 'Пользователь поставил отметку "Не нравится" на видео с id ',
+        func: getActionMessageByBaseURI
+    },
+    "removed-like": {
+        message: 'Пользователь убрал отметку "Нравится" с видео с id ',
+        func: getActionMessageByBaseURI
+    },
+    "removed-dislike": {
+        message: 'Пользователь убрал отметку "Не нравится" с видео с id ',
+        func: getActionMessageByBaseURI
+    },
+    "find": {
+        message: 'Пользователь искал видео по теме: ',
+        func: getFindActionMessage
+    },
+    "video": {
+        message :'Пользователь перешел на страницу видео с id ',
+        func: getActionMessageByHref
+    },
+    "thumbnail": {
+        message :'Пользователь перешел на страницу видео с id ',
+        func: getActionMessageByThumbnail
+    },
+    "to-videos-list": {
+        message: 'Пользователь перешел по "<-- К списку видео"',
+        func: getActionMessage
+    }
 }
 
 targets.forEach(target => {
@@ -25,38 +50,42 @@ targets.forEach(target => {
 })
 
 function generateLog(actionMsg){
-    let dateObj = new Date();
-    dateObj.getTime().toLocaleString();
     return {
         action: actionMsg,
-        date: dateObj.toLocaleDateString("ru"),
-        time: dateObj.toLocaleTimeString("ru")
+        datetime: new Date()
     };
 }
 
 function getActionMsg(e) {
     let target = e.target;
     let event = target.className;
-    switch (event) {
-        case 'liked':
-        case "disliked":
-        case "removed-like":
-        case "removed-dislike":
-            let btnVideoId = target.baseURI.replace("http://localhost:8081/user/videos/", "")
-            return events[event] + btnVideoId;
-        case "video":
-            let AvideoId = target.href.replace("http://localhost:8081/user/videos/", "")
-            return events[event] + AvideoId;
-        case "find":
-            let pattern = document.querySelector("#pattern")
-            if (pattern.value.trim().length > 0) {
-                return events[event] + `"${pattern.value}"`;
-            }
-            break;
-        case "to-videos-list":
-            return events[event];
-    }
-    return null;
+    let message = events[event].message;
+    let func = events[event].func;
+    return func(e, message)
+}
+
+function getActionMessageByBaseURI(e, message) {
+    let target = e.target;
+    return message + target.baseURI.replace("http://localhost:8081/user/videos/", "")
+}
+
+function getActionMessageByHref(e, message) {
+    console.log(e)
+    let target = e.target;
+    return message + target.href.replace("http://localhost:8081/user/videos/", "")
+}
+
+function getFindActionMessage(e, message) {
+    let select = document.querySelector(".select-tag");
+    return message + select.options[select.selectedIndex].text;
+}
+
+function getActionMessageByThumbnail(e, message) {
+    return message + e.target.parentElement.href.replace("http://localhost:8081/user/videos/", "")
+}
+
+function getActionMessage(e, message) {
+    return message;
 }
 
 async function sendLog(log) {

@@ -9,8 +9,13 @@
 <a class=to-videos-list data-th-href="@{/user/videos}"><-- К списку видео</a>
 <video width="640" height="480" data-th-src="${video.getUrl()}" muted controls></video>
 <h1 data-th-text="${video.getTitle()}"></h1>
+<div th:if="${isLogged == true}">
+  <form method="get" data-th-action="@{/admin/videos/edit/{videoId}(videoId=${video.getId()})}">
+    <button type="submit">Редактировать</button>
+  </form>
+</div>
 <p>Описание: <span data-th-text="${video.getContent()}"></span></p>
-<p>Темы: <span data-th-text="${video.getTags()} "></span></p>
+<p>Тема: <span data-th-text="${video.getTagTitle()} "></span></p>
 <div class="row">
   <label>
     <span id="likes" data-th-text="${video.getLikes()}"></span>
